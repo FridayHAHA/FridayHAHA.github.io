@@ -153,6 +153,148 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-JVM学习：内存结构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/12/18/JVM%E5%AD%A6%E4%B9%A0%EF%BC%9A%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/">JVM学习：内存结构</a>
+    </h1>
+  
+
+        
+        <a href="/2019/12/18/JVM%E5%AD%A6%E4%B9%A0%EF%BC%9A%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" class="archive-article-date">
+  	<time datetime="2019-12-18T14:53:29.694Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="JVM学习（一）：内存结构"><a href="#JVM学习（一）：内存结构" class="headerlink" title="JVM学习（一）：内存结构"></a>JVM学习（一）：内存结构</h2><h4 id="1-static变量"><a href="#1-static变量" class="headerlink" title="1.static变量"></a>1.static变量</h4><p>static int x=0定义的变量是多线程共享的，对其进行赋值（加减乘除）后，需要写回static变量。</p>
+<h4 id="2-方法内的局部变量是否线程安全？"><a href="#2-方法内的局部变量是否线程安全？" class="headerlink" title="2.方法内的局部变量是否线程安全？"></a>2.方法内的局部变量是否线程安全？</h4><ul>
+<li><p>如果方法内局部变量没有逃离方法的作用访问，它是线程安全的</p>
+</li>
+<li><p>如果是局部变量引用了对象，并逃离方法的作用范围，需要考虑线程安全</p>
+</li>
+</ul>
+<h4 id="3-栈内存溢出（Error-StackOverflowError）"><a href="#3-栈内存溢出（Error-StackOverflowError）" class="headerlink" title="3.栈内存溢出（Error:StackOverflowError）"></a>3.栈内存溢出（Error:StackOverflowError）</h4><ul>
+<li><p>方法递归造成</p>
+</li>
+<li><p>定位</p>
+<p>用top定位哪个进程对cpu的占用过高</p>
+<p>ps H -eo pid,tid,%cpu | grep 进程id （用ps命令进一步定位是哪个线程引起的cpu占用过高）</p>
+<p>jstack 进程id</p>
+<ul>
+<li>可以根据线程id 找到有问题的线程，进一步定位到问题代码的源码行号</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-本地方法栈："><a href="#4-本地方法栈：" class="headerlink" title="4.本地方法栈："></a>4.本地方法栈：</h4><p>为本地方法提供的内存空间，java代码不能直接调用计算机本地方法接口方法，需要借助C++等编写的本地方法（如object的clone、wait等 ）。</p>
+<h4 id="5-对内存溢出（OutOfMemoryError-Java-heap-space）"><a href="#5-对内存溢出（OutOfMemoryError-Java-heap-space）" class="headerlink" title="5.对内存溢出（OutOfMemoryError:Java heap space）"></a>5.对内存溢出（OutOfMemoryError:Java heap space）</h4><h4 id="6-常量池-amp-运行时常量池"><a href="#6-常量池-amp-运行时常量池" class="headerlink" title="6.常量池&amp;运行时常量池"></a>6.常量池&amp;运行时常量池</h4><ul>
+<li>常量池，就是一张表，虚拟机指令根据这张常量表找到要执行的类名、方法名、参数类型、字面量</li>
+</ul>
+<p>等信息</p>
+<ul>
+<li>运行时常量池，常量池是 *.class 文件中的，当该类被加载，它的常量池信息就会放入运行时常量</li>
+</ul>
+<p>池，并把里面的符号地址变为真实地址</p>
+<h4 id="7-字符串拼接解析"><a href="#7-字符串拼接解析" class="headerlink" title="7.字符串拼接解析"></a>7.字符串拼接解析</h4><ul>
+<li><p>// StringTable [ “a”, “b” ,”ab” ]  hashtable 结构，不能扩容</p>
+<pre><code>// 常量池中的信息，都会被加载到运行时常量池中， 这时 a b ab 都是常量池中的符号，还没有变为 java 字符串对象
+// ldc #2 会把 a 符号变为 &quot;a&quot; 字符串对象
+// ldc #3 会把 b 符号变为 &quot;b&quot; 字符串对象
+// ldc #4 会把 ab 符号变为 &quot;ab&quot; 字符串对象
+
+public static void main(String[] args) {
+    String s1 = &quot;a&quot;; // 懒惰的
+    String s2 = &quot;b&quot;;
+    String s3 = &quot;ab&quot;;
+    String s4 = s1 + s2; // new StringBuilder().append(&quot;a&quot;).append(&quot;b&quot;).toString()  new String(&quot;ab&quot;)
+    String s5 = &quot;a&quot; + &quot;b&quot;;  // javac 在编译期间的优化，结果已经在编译期确定为ab
+    System.out.println(s3 == s5);
+    }</code></pre></li>
+</ul>
+<ul>
+<li>以上String s4 = s1+s2做的字符串拼接中，拼接成的“ab”不会存在串池中，仅存在堆里。</li>
+</ul>
+<h4 id="8-String的intern-方法"><a href="#8-String的intern-方法" class="headerlink" title="8.String的intern()方法"></a>8.String的intern()方法</h4><pre><code>    public static void main(String[] args) {
+    String x = &quot;ab&quot;;
+    //  [&quot;ab&quot;, &quot;a&quot;, &quot;b&quot;]
+    String s = new String(&quot;a&quot;) + new String(&quot;b&quot;);
+
+    // 堆  new String(&quot;a&quot;)   new String(&quot;b&quot;) new String(&quot;ab&quot;)
+    String s2 = s.intern(); // 将这个字符串对象尝试放入串池，如果有则并不会放入，如果没有则放入串池， 会把串池中的对象返回
+
+    System.out.println( s2 == x);//true
+    System.out.println( s == x );//false
+}</code></pre><h4 id="9-StringTable性能调优"><a href="#9-StringTable性能调优" class="headerlink" title="9.StringTable性能调优"></a>9.StringTable性能调优</h4><ul>
+<li>调整 -XX:StringTableSize=桶个数（桶个数越大性能越好）</li>
+<li>考虑将字符串对象是否入池<ul>
+<li>如果存入大量字符串，建议存入常量池，避免字符串重复过多影响堆内存存储（使用intern()方法），减小堆内存存储压力。</li>
+</ul>
+</li>
+</ul>
+<img src="C:\Users\shenyi\Desktop\学习截图\本地方法栈.png" alt="本地方法栈" style="zoom:80%;" />
+
+<h4 id="10-直接内存（Direct-Memory）"><a href="#10-直接内存（Direct-Memory）" class="headerlink" title="10.直接内存（Direct Memory）"></a>10.直接内存（Direct Memory）</h4><ul>
+<li><p>常见于 NIO 操作时，用于数据缓冲区；分配回收成本较高，但读写性能高；不受 JVM 内存回收管理。</p>
+</li>
+<li><p>为什么使用直接内存ByteBuffer读取磁盘文件效率比较高</p>
+<ul>
+<li><p>java代码本身不具备读取磁盘文件能力，需要调用系统的方法函数。读取文件时先保存到操作系统的系统缓存区，java堆内存不能直接读取磁盘文件，之后java缓冲区再从系统缓存区读取数据，之后再进行输入输出流操作。（数据需要存储两份）</p>
+<img src="C:\Users\shenyi\Desktop\学习截图\java读取文件.png" alt="java读取文件" style="zoom: 80%;" />
+</li>
+<li><img src="C:\Users\shenyi\Desktop\学习截图\直接内存读取文件.png" alt="直接内存读取文件" style="zoom:80%;" />
+
+</li>
+</ul>
+</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/12/18/JVM%E5%AD%A6%E4%B9%A0%EF%BC%9A%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Typora的使用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     

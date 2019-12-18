@@ -6,17 +6,21 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Typora的使用 | Hexo</title>
+  <title>JVM学习：内存结构 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Typora可以根据当前文档的标题层级，自动生成并显示大纲，窗口的右下角并有字数显示。标题的使用标题的使用格式 一阶标题 或者快捷键Ctrl+1##二阶标题 或者快捷键Ctrl+2 ###三阶标题 或者快捷键Ctrl+3 ####四阶标题 或者快捷键Ctrl+4 #####五阶标题 或者快捷键Ctrl+5 ######六阶标题 或者快捷键Ctrl+6 标题Typora显示形式是 文本居中文本居中使">
+  <meta name="description" content="JVM学习（一）：内存结构1.static变量static int x&#x3D;0定义的变量是多线程共享的，对其进行赋值（加减乘除）后，需要写回static变量。 2.方法内的局部变量是否线程安全？ 如果方法内局部变量没有逃离方法的作用访问，它是线程安全的  如果是局部变量引用了对象，并逃离方法的作用范围，需要考虑线程安全   3.栈内存溢出（Error:StackOverflowError） 方法递归造">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Typora的使用">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;30&#x2F;Typora%E7%9A%84%E4%BD%BF%E7%94%A8&#x2F;index.html">
+<meta property="og:title" content="JVM学习：内存结构">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;18&#x2F;JVM%E5%AD%A6%E4%B9%A0%EF%BC%9A%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84&#x2F;index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Typora可以根据当前文档的标题层级，自动生成并显示大纲，窗口的右下角并有字数显示。标题的使用标题的使用格式 一阶标题 或者快捷键Ctrl+1##二阶标题 或者快捷键Ctrl+2 ###三阶标题 或者快捷键Ctrl+3 ####四阶标题 或者快捷键Ctrl+4 #####五阶标题 或者快捷键Ctrl+5 ######六阶标题 或者快捷键Ctrl+6 标题Typora显示形式是 文本居中文本居中使">
+<meta property="og:description" content="JVM学习（一）：内存结构1.static变量static int x&#x3D;0定义的变量是多线程共享的，对其进行赋值（加减乘除）后，需要写回static变量。 2.方法内的局部变量是否线程安全？ 如果方法内局部变量没有逃离方法的作用访问，它是线程安全的  如果是局部变量引用了对象，并逃离方法的作用范围，需要考虑线程安全   3.栈内存溢出（Error:StackOverflowError） 方法递归造">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-30T13:18:08.818Z">
+<meta property="og:image" content="c:&#x2F;Users&#x2F;shenyi&#x2F;Desktop&#x2F;学习截图&#x2F;本地方法栈.png">
+<meta property="og:image" content="c:&#x2F;Users&#x2F;shenyi&#x2F;Desktop&#x2F;学习截图&#x2F;java读取文件.png">
+<meta property="og:image" content="c:&#x2F;Users&#x2F;shenyi&#x2F;Desktop&#x2F;学习截图&#x2F;直接内存读取文件.png">
+<meta property="og:updated_time" content="2019-12-18T08:41:08.885Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:&#x2F;Users&#x2F;shenyi&#x2F;Desktop&#x2F;学习截图&#x2F;本地方法栈.png">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -152,87 +156,106 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Typora的使用" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-JVM学习：内存结构" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Typora的使用
+      JVM学习：内存结构
     </h1>
   
 
         
-        <a href="/2019/11/30/Typora%E7%9A%84%E4%BD%BF%E7%94%A8/" class="archive-article-date">
-  	<time datetime="2019-11-30T13:20:14.669Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-30</time>
+        <a href="/2019/12/18/JVM%E5%AD%A6%E4%B9%A0%EF%BC%9A%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" class="archive-article-date">
+  	<time datetime="2019-12-18T14:53:29.694Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-18</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Typora可以根据当前文档的标题层级，自动生成并显示大纲，窗口的右下角并有字数显示。<br>标题的使用<br>标题的使用格式</p>
-<h1 id="一阶标题-或者快捷键Ctrl-1"><a href="#一阶标题-或者快捷键Ctrl-1" class="headerlink" title="一阶标题 或者快捷键Ctrl+1"></a>一阶标题 或者快捷键Ctrl+1</h1><p>##二阶标题 或者快捷键Ctrl+2</p>
-<p>###三阶标题 或者快捷键Ctrl+3</p>
-<p>####四阶标题 或者快捷键Ctrl+4</p>
-<p>#####五阶标题 或者快捷键Ctrl+5</p>
-<p>######六阶标题 或者快捷键Ctrl+6</p>
-<p>标题Typora显示形式是</p>
-<p>文本居中<br>文本居中使用格式<br>&lt;center&gt;这是要居中的文本内容&lt;/center&gt;<br>1<br>文本居中在Typora中显示形式是<br>这是要居中的文本<br>注：Typora目前并不会直接预览居中效果——相应的效果只有输出文本的时候才会显现。</p>
-<p>下划线<br>下划线使用格式<br><u>下划线的内容&lt;\u&gt;    或者快捷键Ctrl+U</p>
-<p>下划线在Typora显示形式是<br>这就是我亲测的下划线</p>
-<p>删除线<br>删除线使用格式<br><del>删除线的内容</del></p>
-<p>删除线在Typora显示形式是<br>这是删除线的内容</p>
-<p>字体加粗<br>字体加粗使用格式<br><strong>加粗字体</strong>    或者快捷键Ctrl+B</p>
-<p>字体加粗在Typora显示形式是<br>加粗字体 This is a bold font</p>
-<p>字体倾斜<br>字体倾斜使用格式<br><em>字体倾斜了</em>    或者快捷键Ctrl+I</p>
-<p>字体倾斜在Typora的显示形式<br>字体倾斜了 This is a alanted font</p>
-<p>图片的插入<br>最简单粗暴的图片插入方式如图：</p>
-<p>图片来源<a href="http://support.typora.io/Images" target="_blank" rel="noopener">http://support.typora.io/Images</a></p>
-<p>超链接<br>超链接使用格式<br>第一种：<a href="http://www.simba.com" target="_blank" rel="noopener">http://www.simba.com</a></p>
-<p>第二种：快捷键Ctrl+K</p>
-<p><a href="超链接地址">自定义内容</a>    例如：<a href="www.baidu.com">百度一下</a></p>
-<p>超链接在Typora显示形式是：（必须以http开头）<br>第一种：<a href="http://www.simba.com" target="_blank" rel="noopener">http://www.simba.com</a></p>
-<p>第二种：百度一下</p>
-<p>按住Ctrl键+点击上面链接就可以直接访问该链接</p>
-<p>代码区域<br>Typora支持对多种语言的代码区域进行语法高亮。这些语言可以说是涵盖了绝大部分经常使用的编程语言，包括C++，Python，MATLAB，甚至包含spreadsheet（也就是Excel电子表格）。用Typora记编程笔记，看起来一清二楚。如果设置代码语言为flow，那么可以直接画出一个流程图；还可以使用相应的方法画出时序图等图表。</p>
-<p>代码区域的使用格式<br><code></code> <code>+编程语言：例如java代码：</code> <code></code>java</p>
-<p>代码区域在typora中显示形式<br>public class simba{<br>  public static void main(String[] args){<br>    System.out.println(“我爱你，中国”);<br>  }<br>}<br>1<br>2<br>3<br>4<br>5<br>表格的使用<br>表格的二种使用格式<br>第一种：快捷键Ctrl+T，会自动跳出设置行和列的设置框，如下图</p>
-<p>第二种：</p>
-<p>|国籍|省份|市区|</p>
-<p>表格在typora中显示形式<br>第一种：</p>
-<p>国籍    省份    市区<br>中国    北京    东城区<br>第二种：</p>
-<p>国籍    省份    市区<br>任务列表<br>任务列表使用格式</p>
-<ul>
-<li><input disabled="" type="checkbox"> 文字 （注：注意用空格隔开）</li>
+        <h2 id="JVM学习（一）：内存结构"><a href="#JVM学习（一）：内存结构" class="headerlink" title="JVM学习（一）：内存结构"></a>JVM学习（一）：内存结构</h2><h4 id="1-static变量"><a href="#1-static变量" class="headerlink" title="1.static变量"></a>1.static变量</h4><p>static int x=0定义的变量是多线程共享的，对其进行赋值（加减乘除）后，需要写回static变量。</p>
+<h4 id="2-方法内的局部变量是否线程安全？"><a href="#2-方法内的局部变量是否线程安全？" class="headerlink" title="2.方法内的局部变量是否线程安全？"></a>2.方法内的局部变量是否线程安全？</h4><ul>
+<li><p>如果方法内局部变量没有逃离方法的作用访问，它是线程安全的</p>
+</li>
+<li><p>如果是局部变量引用了对象，并逃离方法的作用范围，需要考虑线程安全</p>
+</li>
 </ul>
-<p>任务列表在typora中的显示形式<br> JAVA<br> C<br> C++<br> Python<br>（注意：在CSDN博客上未显示，但是在Typora上显示如下图：</p>
-<p>）</p>
-<p>列表<br>列表的使用格式</p>
+<h4 id="3-栈内存溢出（Error-StackOverflowError）"><a href="#3-栈内存溢出（Error-StackOverflowError）" class="headerlink" title="3.栈内存溢出（Error:StackOverflowError）"></a>3.栈内存溢出（Error:StackOverflowError）</h4><ul>
+<li><p>方法递归造成</p>
+</li>
+<li><p>定位</p>
+<p>用top定位哪个进程对cpu的占用过高</p>
+<p>ps H -eo pid,tid,%cpu | grep 进程id （用ps命令进一步定位是哪个线程引起的cpu占用过高）</p>
+<p>jstack 进程id</p>
 <ul>
-<li>、- 、* 创建无序列，任意数字开始+空格创建有序列表</li>
+<li>可以根据线程id 找到有问题的线程，进一步定位到问题代码的源码行号</li>
 </ul>
-<p>列表在typora中的显示形式<br>java<br>C<br>C++<br>Python<br>数学表达式<br>Typora支持加入用LaTeX写成的数学公式，并且在软件界面下用MathJax直接渲染。</p>
-<p>数学公式分为两种：</p>
-<p>一种是行内公式(inline math)，可以在偏好设置中单独打开，由一个美元符号$将公式围起来；</p>
-<p>一种是行外公式，直接按Ctrl+Shift+M；</p>
-<p>注：上标和下标可以使用数学表达式来获取</p>
-<p>水平分割线<br>水平分割线的使用格式<br>***或者- - -</p>
-<p>水平分割线在typora中显示形式<br>（注意：在CSDN博客上未显示，但是在Typora上显示如下图：</p>
-<p>）</p>
-<p>引用<br>引用的使用格式</p>
-<blockquote>
-<p>+空格</p>
-</blockquote>
-<p>引用在typora中的显示形式<br>与天奋斗，其乐无穷！与地奋斗，其乐无穷！与人奋斗，其乐无穷！</p>
-<pre><code>———— 《毛泽东选集》之《奋斗自勉》（毛泽东1917年）</code></pre><p>注释<br>注释的使用格式<br>要添加注释的文字[^注释内容]</p>
-<p>注释在typora中显示形式<br>中国1</p>
-<p>表情<br>表情的使用格式<br>:单词</p>
-<p>表情在typora中的显示形式<br>?<br>（注意：在CSDN博客上未显示，但是在Typora上显示如下图：</p>
-<p>）</p>
-<p>Typora快捷键<br>快捷键    作用    快捷键    作用<br>Ctrl+1    一阶标题    Ctrl+B    字体加粗<br>Ctrl+2    二阶标题    Ctrl+I    字体倾斜<br>Ctrl+3    三阶标题    Ctrl+U    下划线<br>Ctrl+4    四阶标题    Ctrl+Home    返回Typora顶部<br>Ctrl+5    五阶标题    Ctrl+End    返回Typora底部<br>Ctrl+6    六阶标题    Ctrl+T    创建表格<br>Ctrl+L    选中某句话    Ctrl+K    创建超链接<br>Ctrl+D    选中某个单词    Ctrl+F    搜索<br>Ctrl+E    选中相同格式的文字    Ctrl+H    搜索并替换<br>Alt+Shift+5    删除线    Ctrl+Shift+I    插入图片<br>注：一些实体符号需要在实体符号之前加””才能够显示</p>
-<p>伟大的中华人民共和国万岁 ↩︎</p>
+</li>
+</ul>
+<h4 id="4-本地方法栈："><a href="#4-本地方法栈：" class="headerlink" title="4.本地方法栈："></a>4.本地方法栈：</h4><p>为本地方法提供的内存空间，java代码不能直接调用计算机本地方法接口方法，需要借助C++等编写的本地方法（如object的clone、wait等 ）。</p>
+<h4 id="5-对内存溢出（OutOfMemoryError-Java-heap-space）"><a href="#5-对内存溢出（OutOfMemoryError-Java-heap-space）" class="headerlink" title="5.对内存溢出（OutOfMemoryError:Java heap space）"></a>5.对内存溢出（OutOfMemoryError:Java heap space）</h4><h4 id="6-常量池-amp-运行时常量池"><a href="#6-常量池-amp-运行时常量池" class="headerlink" title="6.常量池&amp;运行时常量池"></a>6.常量池&amp;运行时常量池</h4><ul>
+<li>常量池，就是一张表，虚拟机指令根据这张常量表找到要执行的类名、方法名、参数类型、字面量</li>
+</ul>
+<p>等信息</p>
+<ul>
+<li>运行时常量池，常量池是 *.class 文件中的，当该类被加载，它的常量池信息就会放入运行时常量</li>
+</ul>
+<p>池，并把里面的符号地址变为真实地址</p>
+<h4 id="7-字符串拼接解析"><a href="#7-字符串拼接解析" class="headerlink" title="7.字符串拼接解析"></a>7.字符串拼接解析</h4><ul>
+<li><p>// StringTable [ “a”, “b” ,”ab” ]  hashtable 结构，不能扩容</p>
+<pre><code>// 常量池中的信息，都会被加载到运行时常量池中， 这时 a b ab 都是常量池中的符号，还没有变为 java 字符串对象
+// ldc #2 会把 a 符号变为 &quot;a&quot; 字符串对象
+// ldc #3 会把 b 符号变为 &quot;b&quot; 字符串对象
+// ldc #4 会把 ab 符号变为 &quot;ab&quot; 字符串对象
+
+public static void main(String[] args) {
+    String s1 = &quot;a&quot;; // 懒惰的
+    String s2 = &quot;b&quot;;
+    String s3 = &quot;ab&quot;;
+    String s4 = s1 + s2; // new StringBuilder().append(&quot;a&quot;).append(&quot;b&quot;).toString()  new String(&quot;ab&quot;)
+    String s5 = &quot;a&quot; + &quot;b&quot;;  // javac 在编译期间的优化，结果已经在编译期确定为ab
+    System.out.println(s3 == s5);
+    }</code></pre></li>
+</ul>
+<ul>
+<li>以上String s4 = s1+s2做的字符串拼接中，拼接成的“ab”不会存在串池中，仅存在堆里。</li>
+</ul>
+<h4 id="8-String的intern-方法"><a href="#8-String的intern-方法" class="headerlink" title="8.String的intern()方法"></a>8.String的intern()方法</h4><pre><code>    public static void main(String[] args) {
+    String x = &quot;ab&quot;;
+    //  [&quot;ab&quot;, &quot;a&quot;, &quot;b&quot;]
+    String s = new String(&quot;a&quot;) + new String(&quot;b&quot;);
+
+    // 堆  new String(&quot;a&quot;)   new String(&quot;b&quot;) new String(&quot;ab&quot;)
+    String s2 = s.intern(); // 将这个字符串对象尝试放入串池，如果有则并不会放入，如果没有则放入串池， 会把串池中的对象返回
+
+    System.out.println( s2 == x);//true
+    System.out.println( s == x );//false
+}</code></pre><h4 id="9-StringTable性能调优"><a href="#9-StringTable性能调优" class="headerlink" title="9.StringTable性能调优"></a>9.StringTable性能调优</h4><ul>
+<li>调整 -XX:StringTableSize=桶个数（桶个数越大性能越好）</li>
+<li>考虑将字符串对象是否入池<ul>
+<li>如果存入大量字符串，建议存入常量池，避免字符串重复过多影响堆内存存储（使用intern()方法），减小堆内存存储压力。</li>
+</ul>
+</li>
+</ul>
+<img src="C:\Users\shenyi\Desktop\学习截图\本地方法栈.png" alt="本地方法栈" style="zoom:80%;" />
+
+<h4 id="10-直接内存（Direct-Memory）"><a href="#10-直接内存（Direct-Memory）" class="headerlink" title="10.直接内存（Direct Memory）"></a>10.直接内存（Direct Memory）</h4><ul>
+<li><p>常见于 NIO 操作时，用于数据缓冲区；分配回收成本较高，但读写性能高；不受 JVM 内存回收管理。</p>
+</li>
+<li><p>为什么使用直接内存ByteBuffer读取磁盘文件效率比较高</p>
+<ul>
+<li><p>java代码本身不具备读取磁盘文件能力，需要调用系统的方法函数。读取文件时先保存到操作系统的系统缓存区，java堆内存不能直接读取磁盘文件，之后java缓冲区再从系统缓存区读取数据，之后再进行输入输出流操作。（数据需要存储两份）</p>
+<img src="C:\Users\shenyi\Desktop\学习截图\java读取文件.png" alt="java读取文件" style="zoom: 80%;" />
+</li>
+<li><img src="C:\Users\shenyi\Desktop\学习截图\直接内存读取文件.png" alt="直接内存读取文件" style="zoom:80%;" />
+
+</li>
+</ul>
+</li>
+</ul>
 
       
 
@@ -312,7 +335,7 @@
     <a class="close js-modal-close" href="javascript:;" target="_blank" rel="noopener"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/11/30/Typora%E7%9A%84%E4%BD%BF%E7%94%A8/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2019/12/18/JVM%E5%AD%A6%E4%B9%A0%EF%BC%9A%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -326,18 +349,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/12/18/JVM%E5%AD%A6%E4%B9%A0%EF%BC%9A%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          JVM学习：内存结构
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/11/30/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">我的第一篇博客</div>
+    <a href="/2019/11/30/Typora%E7%9A%84%E4%BD%BF%E7%94%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Typora的使用</div>
       <i class="icon-circle-right"></i>
     </a>
   
